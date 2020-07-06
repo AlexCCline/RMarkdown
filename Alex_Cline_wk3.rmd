@@ -1,0 +1,154 @@
+---
+title: "p04"
+author: "Alex Cline"
+date: "4/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r startproj, echo=FALSE}
+# Packages
+library(ggplot2)
+library(dplyr)
+library(viridis) 
+library(ggthemes)
+library(plotly)
+
+# create data and change Group to Tide, Time to duration, and value to unit
+Duration <- as.numeric(rep(seq(1,7),each=7))  # x Axis
+Unit <- runif(49, 10, 100)               # y Axis
+Tide <- rep(LETTERS[1:7],times=7)        # Tide, one shape per Tide
+#change Group to Tide, value to unit, and time to duration
+data <- data.frame(Duration, Unit, Tide)
+
+# stacked area chart, add scalel_fill_brewer() and theme_solarized(), add title, and rename axis labels
+a <- ggplot(data, aes(x=Duration, y=Unit, fill=Tide)) + 
+    geom_area() + scale_fill_brewer()+ theme_solarized() +labs(title="Pacific Ocean Waves Per Hour Ranked By Tide")
+
+
+
+ggplotly(a)
+
+png("plot1wk4a.png")
+plot(a)
+dev.off()
+
+
+jpeg("plot1wk4b.jpg")
+plot(a)
+dev.off()
+
+###########################################
+
+library(ggplot2)
+library(dplyr)
+library(babynames)
+library(ggrepel)
+library(tidyr)
+
+# data #change year to >1980 #change name to George and Samantha
+data <- babynames %>% 
+  filter(name %in% c("George", "Samantha")) %>%
+  filter(sex=="F") %>%
+  filter(year>1980) %>%
+  select(year, name, n) %>%
+  spread(key = name, value=n, -1)
+
+# Select a few date to label the chart
+tmp_date <- data %>% sample_frac(0.3)
+
+# plot #change color to red #FF0000 and theme_wsj(), change name to George and Samantha
+w <- data %>% 
+  ggplot(aes(x=George, y=Samantha, label=year)) +
+     geom_point(color="#FF0000") +
+     geom_text_repel(data=tmp_date) +
+     geom_segment(color="#FF0000", 
+                  aes(
+                    xend=c(tail(George, n=-1), NA), 
+                    yend=c(tail(Samantha, n=-1), NA)
+                  ),
+                  arrow=arrow(length=unit(0.3,"cm"))
+      ) +
+      theme_wsj()
+
+ggplotly(w)
+
+
+png("plot2wk4a.png")
+plot(w)
+dev.off()
+
+
+jpeg("plot2wk4b.jpg")
+plot(w)
+dev.off()
+
+
+####################################################
+
+# library
+library(ggplot2)
+library(dplyr)
+
+# Create data (this takes more sense with a numerical X axis)
+x <- seq(0, 2*pi, length.out=100)
+data <- data.frame(
+  x=x, 
+  y=sin(x) + rnorm(100, sd=0.2)
+)
+ 
+# Add a column with your condition for the color
+data <- data %>% 
+  mutate(mycolor = ifelse(y>3, "type1", "type2"))
+ 
+# plot, add scale fill virdis d, add theme economist, add title
+e<-ggplot(data, aes(x=x, y=y)) +
+  geom_segment( aes(x=x, xend=x, y=0, yend=y, color=mycolor+scale_fill_viridis_d()), size=1.3, alpha=0.9) +
+  theme_economist() + 
+  theme(
+    legend.position = "none",
+    panel.border = element_blank(),
+  ) +
+  xlab("") +
+  ylab("Value of Y") + labs(title="Chart")
+
+ggplotly(e)
+
+png("plot3wk4a.png")
+plot(e)
+dev.off()
+
+
+jpeg("plot3wk4b.jpg")
+plot(e)
+dev.off()
+
+
+##########################################
+
+# Libraries
+library(GGally)
+
+# Data set is provided by R natively
+data <- iris
+
+# Plot, add scale color virdis d, add theme excel new, and add title
+q<-ggparcoord(data,
+    columns = 1:4, groupColumn = 5
+    )+scale_color_viridis_d() +theme_excel_new() +labs(title="IRIS PARALELL COORDINATES CHART")
+ggplotly(q)
+
+
+png("plot4wk4a.png")
+plot(q)
+dev.off()
+
+
+jpeg("plot4wk4b.jpg")
+plot(q)
+dev.off()
+
+```
